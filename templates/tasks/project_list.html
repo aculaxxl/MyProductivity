@@ -1,24 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row justify-content-center mt-4">
     <div class="col-md-8">
-        <h2 class="mb-4">My Projects</h2>
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-                <form hx-post="{% url 'tasks:project-create' %}" 
-                      hx-target="#project-list" 
-                      hx-swap="beforeend" 
-                      _="on htmx:afterRequest reset() me">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        {{ form.name }}
-                        <button class="btn btn-primary" type="submit">Add Project</button>
-                    </div>
-                </form>
-            </div>
+        <h2 class="mb-4 fw-bold">My Projects</h2>
+        <div id="project-form-container">
+            {% include "tasks/project_form_partial.html" %}
         </div>
-        <div id="project-list" class="list-group">
+
+        <div id="project-list" class="list-group mt-4">
             {% for project in projects %}
                 {% include "tasks/project_element.html" %}
             {% endfor %}
