@@ -1,0 +1,16 @@
+<div id="project-form-container" class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form hx-post="{% url 'tasks:project-create' %}" hx-swap="none">
+            {% csrf_token %}
+            <div class="input-group">
+                {{ form.name }}
+                <button class="btn btn-primary" type="submit">Add Project</button>
+            </div>
+            {% if form.name.errors %}
+                <div class="text-danger small mt-2 fw-bold">
+                    {{ form.name.errors.0 }}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
