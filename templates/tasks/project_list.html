@@ -1,5 +1,28 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <h1>My projects</h1>
-    <p>here will be our htmx</p>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">My Projects</h2>
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form hx-post="{% url 'tasks:project-create' %}" 
+                      hx-target="#project-list" 
+                      hx-swap="beforeend" 
+                      _="on htmx:afterRequest reset() me">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        {{ form.name }}
+                        <button class="btn btn-primary" type="submit">Add Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="project-list" class="list-group">
+            {% for project in projects %}
+                {% include "tasks/project_element.html" %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
