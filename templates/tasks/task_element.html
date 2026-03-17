@@ -1,7 +1,15 @@
-<div class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm border-start border-3 
-    {% if task.priority == 3 %}border-danger{% elif task.priority == 2 %}border-warning{% else %}border-info{% endif %}">
-    <div>
-        <input class="form-check-input me-2" type="checkbox" {% if task.is_done %}checked{% endif %}>
+<div id="task-{{ task.id }}" 
+    class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm border-start border-3 
+        {% if task.is_done %}bg-light opacity-75{% endif %}    
+        {% if task.priority == 3 %}border-danger{% elif task.priority == 2 %}border-warning{% else %}border-info{% endif %}"
+    >
+    <div class="d-flex align-items-center">
+        <input class="form-check-input me-2" type="checkbox" 
+        hx-post="{% url 'tasks:task-toggle' task.id %}" 
+        hx-target="#task-{{ task.id }}" 
+        hx-swap="outerHTML"
+        {% if task.is_done %}checked{% endif %}>
+        
         <span class="{% if task.is_done %}text-decoration-line-through text-muted{% endif %}">
             {{ task.name }}
         </span>
