@@ -18,7 +18,7 @@
         <div class="card-body">
             <form hx-post="{% url 'tasks:task-create' project.id %}" 
                 hx-target="#task-list" 
-                hx-swap="beforeend" 
+                hx-swap="afterbegin" 
                 _="on htmx:afterRequest reset() me then remove #empty-state">
                 {% csrf_token %}
                 <div class="row g-2">
@@ -33,7 +33,7 @@
         </div>
     </div>
     <div id="task-list" class="list-group shadow-sm">
-        {% for task in project.tasks.all %}
+        {% for task in tasks %}
             {% include "tasks/task_element.html" %}
         {% empty %}
             <div id="empty-state" class="text-center py-5 bg-white rounded">
