@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Project
-from .forms import ProjectForm
+from .models import Project, Task
+from .forms import ProjectForm, TaskForm
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 
@@ -56,3 +56,18 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'project'
     def get_queryset(self):
         return Project.objects.filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task_form'] = TaskForm()  
+        return context
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+
+    def form_valid(self, form):
+        project_id = self.kwargs.get('pk')
+        form.instance.project_id = project_id
+        task = form.save()
+        return render(self.request, 'tasks/task_element.html', {'task': task})

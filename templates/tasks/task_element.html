@@ -1,0 +1,18 @@
+<div class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm border-start border-3 
+    {% if task.priority == 3 %}border-danger{% elif task.priority == 2 %}border-warning{% else %}border-info{% endif %}">
+    <div>
+        <input class="form-check-input me-2" type="checkbox" {% if task.is_done %}checked{% endif %}>
+        <span class="{% if task.is_done %}text-decoration-line-through text-muted{% endif %}">
+            {{ task.name }}
+        </span>
+        {% if task.deadline %}
+            <small class="ms-3 text-muted"><i class="bi bi-calendar"></i> {{ task.deadline|date:"d M Y" }}</small>
+        {% endif %}
+    </div>
+    <div>
+        <span class="badge rounded-pill 
+            {% if task.priority == 3 %}bg-danger{% elif task.priority == 2 %}bg-warning text-dark{% else %}bg-info{% endif %}">
+            {{ task.get_priority_display }}
+        </span>
+    </div>
+</div>
