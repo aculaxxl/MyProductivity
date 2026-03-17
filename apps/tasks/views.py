@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Project
 from .forms import ProjectForm
@@ -49,3 +49,10 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
         response['HX-Retarget'] = '#project-form-container'
         response['HX-Reswap'] = 'outerHTML'
         return response
+
+class ProjectDetailView(LoginRequiredMixin, DetailView):
+    model = Project
+    template_name = 'tasks/project_detail.html'
+    context_object_name = 'project'
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user)
