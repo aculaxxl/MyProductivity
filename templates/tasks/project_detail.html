@@ -15,7 +15,31 @@
     </div>
     
     <div class="card shadow-sm p-5 text-center">
-        <p class="text-muted mb-0">Tasks:</p>
+        <div class="card-body">
+            <form hx-post="{% url 'tasks:task-create' project.id %}" 
+                hx-target="#task-list" 
+                hx-swap="beforeend" 
+                _="on htmx:afterRequest reset() me then remove #empty-state">
+                {% csrf_token %}
+                <div class="row g-2">
+                    <div class="col-md-6">{{ task_form.name }}</div>
+                    <div class="col-md-3">{{ task_form.deadline }}</div>
+                    <div class="col-md-2">{{ task_form.priority }}</div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="task-list" class="list-group shadow-sm">
+        {% for task in project.tasks.all %}
+            {% include "tasks/task_element.html" %}
+        {% empty %}
+            <div id="empty-state" class="text-center py-5 bg-white rounded">
+                <p class="text-muted text-center py-4">No tasks yet. Add first task</p>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

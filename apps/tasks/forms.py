@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project
+from .models import Project, Task
 from django.core.exceptions import ValidationError
 
 class ProjectForm(forms.ModelForm):
@@ -21,3 +21,13 @@ class ProjectForm(forms.ModelForm):
         if Project.objects.filter(user=self.user, name__iexact=name).exists():
             raise ValidationError("You already have a project with this name, please enter another name")
         return name
+    
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['name', 'deadline', 'priority']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a task name'}),
+            'deadline': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'priority': forms.Select(attrs={'class': 'form-select'}),
+        }
