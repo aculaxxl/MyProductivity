@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .models import Project, Task
@@ -62,14 +62,7 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         project = self.get_object()
-        tasks = project.tasks.annotate(
-            custom_order=Case(
-                When(is_done=False, then=F('deadline')),
-                default=F('deadline'),
-            )
-        ).order_by('is_done', 'custom_order' if not F('is_done') else '-custom_order')
-        
-        active_tasks = project.tasks.filter(is_done=False).order_by('deadline', '-priority')
+        active_tasks = project.tasks.filter(is_done=False).order_by('-priority', 'deadline')
         completed_tasks = project.tasks.filter(is_done=True).order_by('-deadline')
         context['tasks'] = list(active_tasks) + list(completed_tasks)
         context['task_form'] = TaskForm()
@@ -91,3 +84,25 @@ class TaskToggleView(LoginRequiredMixin, View):
         task.is_done = not task.is_done
         task.save()
         return render(request, 'tasks/task_element.html', {'task': task})
+
+class TaskDeleteView(LoginRequiredMixin, View):
+    def delete(self, request, pk):
+        task = get_object_or_404(Task, pk=pk, project__user=request.user)
+        task.delete()
+        return HttpResponse("") 
+
+class TaskEditView(LoginRequiredMixin, UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'tasks/task_edit_partial.html'
+
+    def get_queryset(self):
+        return Task.objects.filter(project__user=self.request.user)
+
+    def form_valid(self, form):
+        task = form.save()
+        return render(self.request, 'tasks/task_element.html', {'task': task})
+
+class TaskReorderView(LoginRequiredMixin, View):
+    def post(self, request):
+        return HttpResponse(status=204)
