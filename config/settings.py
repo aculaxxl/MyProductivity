@@ -145,10 +145,19 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-ACCOUNT_LOGIN_METHODS = {'email'} 
+ACCOUNT_AUTHENTICATION_METHOD = 'email' 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None 
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username' 
+
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_FORMS = {
+    'login': 'apps.users.forms.MyCustomLoginForm',
+    'reset_password': 'apps.users.forms.MyCustomResetPasswordForm',
+}
+ACCOUNT_ADAPTER = 'apps.users.adapters.UsernameMaxAdapter'
