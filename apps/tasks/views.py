@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .models import Project, Task
@@ -123,4 +123,26 @@ class TaskReorderView(LoginRequiredMixin, View):
         Task.objects.bulk_update(tasks, ['position'])
         
         return HttpResponse(status=204)
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+    model = Project
+    fields = ['name']
+    template_name = 'tasks/project_edit_partial.html'
 
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return render(self.request, 'tasks/project_header_partial.html', {'project': self.object})
+
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+    model = Project
+    success_url = reverse_lazy('tasks:project-list')
+
+    def get_queryset(self):
+        return Project.objects.filter(user=self.request.user)
+
+class ProjectHeaderContentView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        project = get_object_or_404(Project, pk=pk, user=request.user)
+        return render(request, 'tasks/project_header_partial.html', {'project': project})

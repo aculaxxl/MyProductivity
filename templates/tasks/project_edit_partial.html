@@ -1,0 +1,23 @@
+<div id="project-header" class="mb-4">
+    <form hx-post="{% url 'tasks:project-edit' project.id %}" 
+          hx-target="#project-header" 
+          hx-swap="outerHTML" 
+          class="d-flex align-items-center bg-white p-2 border-primary border-start border-4 shadow-sm rounded">
+        {% csrf_token %}
+        <input type="text" name="name" value="{{ project.name }}" 
+               class="form-control form-control-lg fw-bold me-2" required>
+        
+        <div class="btn-group">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-lg"></i>
+            </button>
+            <button hx-get="{% url 'tasks:project-header-content' project.id %}" 
+                    hx-target="#project-header" 
+                    hx-swap="outerHTML" 
+                    type="button" 
+                    class="btn btn-outline-secondary">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </form>
+</div>

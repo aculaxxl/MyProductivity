@@ -8,13 +8,10 @@
             <li class="breadcrumb-item active">{{ project.name }}</li>
         </ol>
     </nav>
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="fw-bold">{{ project.name }}</h1>
-        <span class="badge bg-primary fs-4">Project Details</span>
+    <div id="project-header-container">
+        {% include "tasks/project_header_partial.html" %}
     </div>
-    
-    <div class="card shadow-sm p-5 text-center">
+    <div class="card shadow-sm p-4 mb-4 border-0 bg-white">
         <div class="card-body">
             <form hx-post="{% url 'tasks:task-create' project.id %}" 
                 hx-target="#task-list" 
@@ -39,7 +36,6 @@
         hx-include="#task-list input[name='task']"
         _="on load js(me) Sortable.create(me, {handle:'.drag-handle', animation:150, onEnd:()=>me.dispatchEvent(new Event('end'))}) end">
 
-        
         {% for task in tasks %}
             {% include "tasks/task_element.html" %}
         {% empty %}
