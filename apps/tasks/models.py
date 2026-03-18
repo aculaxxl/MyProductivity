@@ -12,6 +12,12 @@ class Project(models.Model):
     def __str__(self):
         return self.name
     
+    def total_tasks_count(self):
+        return self.tasks.count()
+    
+    def active_tasks_count(self):
+        return self.tasks.filter(is_done=False).count()
+    
 class Task(models.Model):
     class Priority(models.IntegerChoices):
         LOW = 1, 'Low'

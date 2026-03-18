@@ -25,7 +25,7 @@
             <a class="navbar-brand" href="/">MyProductivity</a>
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <span class="nav-link text-light">Hallo, {{ user.email }}</span>
+                    <span class="nav-link text-light">Hello, {{ user.email }}</span>
                     <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link nav-link">Logout</button>
