@@ -35,8 +35,11 @@
     <div id="task-list" class="list-group shadow-sm"
         hx-post="{% url 'tasks:task-reorder' %}" 
         hx-trigger="end" 
-        hx-target="end"
-        _="on load js Sortable.create(me, {handle: '.drag-handle', animation: 150}) end">
+        hx-swap="none"
+        hx-include="#task-list input[name='task']"
+        _="on load js(me) Sortable.create(me, {handle:'.drag-handle', animation:150, onEnd:()=>me.dispatchEvent(new Event('end'))}) end">
+
+        
         {% for task in tasks %}
             {% include "tasks/task_element.html" %}
         {% empty %}

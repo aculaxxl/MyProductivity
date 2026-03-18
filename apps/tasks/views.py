@@ -6,7 +6,8 @@ from .models import Project, Task
 from .forms import ProjectForm, TaskForm
 from django.urls import reverse_lazy
 from django.http import HttpResponse
-from django.db.models import Case, When, F
+from django.views.decorators.http import require_POST
+from django.utils.decorators import method_decorator
 
 class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
@@ -79,6 +80,9 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return render(self.request, 'tasks/task_element.html', {'task': task})
     
 class TaskToggleView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        task = get_object_or_404(Task, pk=pk, project__user=request.user)
+        return render(request, 'tasks/task_element.html', {'task': task})
     def post(self, request, pk):
         task = get_object_or_404(Task, pk=pk, project__user=request.user)
         task.is_done = not task.is_done
@@ -103,6 +107,20 @@ class TaskEditView(LoginRequiredMixin, UpdateView):
         task = form.save()
         return render(self.request, 'tasks/task_element.html', {'task': task})
 
+
+@method_decorator(require_POST, name='dispatch')
 class TaskReorderView(LoginRequiredMixin, View):
     def post(self, request):
+        # HTMX/SortableJS send list ID in 'task'
+        task_ids = request.POST.getlist('task')
+        #pozition updating
+        tasks = []
+        for index, task_id in enumerate(task_ids):
+            task = get_object_or_404(Task, id=task_id, project__user=request.user)
+            task.position = index
+            tasks.append(task)
+        
+        Task.objects.bulk_update(tasks, ['position'])
+        
         return HttpResponse(status=204)
+

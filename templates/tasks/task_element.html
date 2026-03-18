@@ -2,9 +2,9 @@
      class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm border-start border-4 
             {% if task.is_done %}bg-light opacity-75{% endif %}
             {% if task.priority == 3 %}border-danger{% elif task.priority == 2 %}border-warning{% else %}border-info{% endif %}">
-    
+    <input type="hidden" name="task" value="{{ task.id }}">
     <div class="d-flex align-items-center">
-        <i class="bi bi-grip-vertical text-muted me-2 drag-handle" style="cursor: move;"></i>
+        <i class="bi bi-grip-vertical text-muted me-2 drag-handle" style="cursor: grab;"></i>
         <input class="form-check-input me-3" type="checkbox" 
                hx-post="{% url 'tasks:task-toggle' task.id %}" 
                hx-target="#task-{{ task.id }}" 
