@@ -1,22 +1,16 @@
-<div id="project-header-container" class="d-flex justify-content-between align-items-center mb-4">
+<div id="project-header-container" class="project-header d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-        <i class="bi bi-list-ul me-2 fs-4 text-primary"></i>
-        <h1 class="fw-bold mb-0">{{ project.name }}</h1>
+        <i class="bi bi-journal-text me-2 fs-4"></i>
+        <h5 class="mb-0 fw-bold">{{ project.name }}</h5>
     </div>
-    
-    <div class="btn-group shadow-sm">
-        <button hx-get="{% url 'tasks:project-edit' project.id %}" 
-                hx-target="#project-header-container" 
-                hx-swap="outerHTML" 
-                class="btn btn-outline-primary border-0">
-            <i class="bi bi-pencil"></i>
+    <div class="btn-group">
+        <button hx-get="{% url 'tasks:project-edit' project.id %}" hx-target="#project-header-container" hx-swap="outerHTML" class="btn btn-link text-white p-1">
+            <i class="bi bi-pencil-fill"></i>
         </button>
-        
-        <form action="{% url 'tasks:project-delete' project.id %}" method="post" 
-              onsubmit="return confirm('Delete project?');" class="d-inline">
+        <form action="{% url 'tasks:project-delete' project.id %}" method="post" class="d-inline">
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger border-0">
-                <i class="bi bi-trash"></i>
+            <button type="submit" class="btn btn-link text-white p-1" onclick="return confirm('Delete project?')">
+                <i class="bi bi-trash-fill"></i>
             </button>
         </form>
     </div>

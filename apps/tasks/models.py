@@ -31,15 +31,14 @@ class Task(models.Model):
     )
     name = models.CharField(max_length=255)
     priority = models.IntegerField(
-        choices=Priority.choices, 
-        default=Priority.LOW
+        default=1, null=True, blank=True
     )
     deadline = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
     position = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['is_done', 'position', '-priority','deadline']
+        ordering = ['position','is_done', 'id']
 
     def __str__(self):
         return self.name

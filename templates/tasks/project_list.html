@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-md-8">
-        <h2 class="mb-4 fw-bold">My Projects</h2>
-        <div id="project-form-container">
-            {% include "tasks/project_form_partial.html" %}
+<div class="container mt-5 py-5">
+    <div class="project-container mx-auto" style="max-width: 850px; background: white;">
+
+        <div class="project-header d-flex align-items-center">
+            <i class="bi bi-list-stars me-2 fs-4"></i>
+            <h4 class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px;">My projects</h4>
         </div>
 
-        <div id="project-list" class="list-group mt-4">
+        <div class="task-create-area">
+            <div id="project-form-container">
+                {% include "tasks/project_form_partial.html" %}
+            </div>
+        </div>
+
+        <div id="project-list" class="bg-white">
             {% for project in projects %}
                 {% include "tasks/project_element.html" %}
             {% endfor %}

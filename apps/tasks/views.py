@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
@@ -69,15 +70,26 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
         context['task_form'] = TaskForm()
         return context
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    form_class = TaskForm
+class TaskCreateView(LoginRequiredMixin, View):
+    def post(self, request, **kwargs):
+        project_id = kwargs.get('pk') or kwargs.get('project_id')
+        project = get_object_or_404(Project, id=project_id, user=request.user)
+        name = request.POST.get('name')
+        if not name:
+            return HttpResponse("Name is required", status=400)
 
-    def form_valid(self, form):
-        project_id = self.kwargs.get('pk')
-        form.instance.project_id = project_id
-        task = form.save()
-        return render(self.request, 'tasks/task_element.html', {'task': task})
+        last_task = Task.objects.filter(project=project).order_by('-position').first()
+        new_position = (last_task.position + 1) if last_task else 1
+        task = Task.objects.create(
+                project=project,
+                name=name,
+                position=new_position,
+                is_done=False,
+                priority=1
+            )
+            
+        return render(request, 'tasks/task_element.html', {'task': task})
+            
     
 class TaskToggleView(LoginRequiredMixin, View):
     def get(self, request, pk):
@@ -97,32 +109,29 @@ class TaskDeleteView(LoginRequiredMixin, View):
 
 class TaskEditView(LoginRequiredMixin, UpdateView):
     model = Task
-    form_class = TaskForm
+    fields = ['name']
     template_name = 'tasks/task_edit_partial.html'
 
     def get_queryset(self):
         return Task.objects.filter(project__user=self.request.user)
 
     def form_valid(self, form):
-        task = form.save()
-        return render(self.request, 'tasks/task_element.html', {'task': task})
+        self.object = form.save()
+        return render(self.request, 'tasks/task_element.html', {'task': self.object})
 
 
-@method_decorator(require_POST, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class TaskReorderView(LoginRequiredMixin, View):
     def post(self, request):
-        # HTMX/SortableJS send list ID in 'task'
         task_ids = request.POST.getlist('task')
-        #pozition updating
-        tasks = []
+
+        if not task_ids:
+            return HttpResponse(status=204)
         for index, task_id in enumerate(task_ids):
-            task = get_object_or_404(Task, id=task_id, project__user=request.user)
-            task.position = index
-            tasks.append(task)
-        
-        Task.objects.bulk_update(tasks, ['position'])
-        
+            Task.objects.filter(id=task_id, project__user=request.user).update(position=index)
+            
         return HttpResponse(status=204)
+
 class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Project
     fields = ['name']

@@ -1,23 +1,18 @@
-<div id="task-{{ task.id }}" class="list-group-item p-3 border-warning border-start border-4 shadow-sm mb-2 bg-white rounded">
+<div id="task-{{ task.id }}" class="task-row d-flex align-items-center bg-light p-2 border-primary border-start border-0">
     <form hx-post="{% url 'tasks:task-edit' task.id %}" 
           hx-target="#task-{{ task.id }}" 
           hx-swap="outerHTML" 
-          class="row g-2 align-items-center">
+          class="d-flex align-items-center w-100">
         {% csrf_token %}
-        <div class="col-md-5">{{ form.name }}</div>
-        <div class="col-md-3">{{ form.deadline }}</div>
-        <div class="col-md-2">{{ form.priority }}</div>
-        <div class="col-md-2 d-flex gap-1">
-            <button type="submit" class="btn btn-success btn-sm w-100">
-                <i class="bi bi-check-lg"></i>
-            </button>
+        <input type="text" name="name" value="{{ task.name }}" 
+               class="form-control form-control-sm me-2 shadow-none" required>
+
+        <div class="btn-group btn-group-sm">
+            <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i></button>
             <button hx-get="{% url 'tasks:task-toggle' task.id %}" 
                     hx-target="#task-{{ task.id }}" 
                     hx-swap="outerHTML" 
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm w-100">
-                <i class="bi bi-x-lg"></i>
-            </button>
+                    type="button" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></button>
         </div>
     </form>
 </div>

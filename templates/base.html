@@ -10,11 +10,53 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background-color: #f8f9fa; 
-        font-family: 'Inter', sans-serif;}
-        .htmx-indicator { display: none; }
-        .htmx-request .htmx-indicator { display: block; }
-    </style>
+        body {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .project-container {
+            border: 1px solid #1e3a5f;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .project-header {
+            background: linear-gradient(to bottom, #4c77b3 0%, #2d558e 100%);
+            color: white;
+            padding: 12px 15px;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        .task-create-area {
+            background-color: #d1d1d1;
+            padding: 10px 15px;
+            border-bottom: 1px solid #999;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .btn-add-task {
+            background: linear-gradient(to bottom, #74b373 0%, #5a8e59 100%);
+            border: 1px solid #4a7549;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        }
+        .btn-add-task:hover { background: #4a7549; color: white; }
+        .task-row {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 10px 15px;
+            transition: background 0.2s;
+        }
+        .task-row:hover {
+            background-color: #fff9d7 !important; 
+        }
+        .task-actions { opacity: 0; transition: opacity 0.2s; }
+        .task-row:hover .task-actions { opacity: 1; }
+        .task-create-area input, 
+
+        </style>
+
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <div class="htmx-indicator progress position-fixed top-0 start-0 w-100" style="height: 3px; z-index: 2000;">

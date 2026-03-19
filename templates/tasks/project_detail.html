@@ -1,48 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'tasks:project-list' %}">Projects</a></li>
-            <li class="breadcrumb-item active">{{ project.name }}</li>
-        </ol>
-    </nav>
-    <div id="project-header-container">
-        {% include "tasks/project_header_partial.html" %}
-    </div>
-    <div class="card shadow-sm p-4 mb-4 border-0 bg-white">
-        <div class="card-body">
+<div class="container mt-5 py-5">
+    <div class="project-container mx-auto" style="max-width: 800px; background: white;">
+        
+        <div id="project-header-container">
+            {% include "tasks/project_header_partial.html" %}
+        </div>
+
+        <div class="task-create-area">
             <form hx-post="{% url 'tasks:task-create' project.id %}" 
                 hx-target="#task-list" 
                 hx-swap="afterbegin" 
-                _="on htmx:afterRequest reset() me then remove #empty-state">
+                _="on htmx:afterRequest reset() me then if #empty-state remove #empty-state end">
                 {% csrf_token %}
-                <div class="row g-2">
-                    <div class="col-md-6">{{ task_form.name }}</div>
-                    <div class="col-md-3">{{ task_form.deadline }}</div>
-                    <div class="col-md-2">{{ task_form.priority }}</div>
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i></button>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-plus-lg text-success fw-bold fs-3 px-2"></i>
+                    <div class="flex-grow-1 mx-2">
+                        <input type="text" name="name" class="form-control border-secondary shadow-none" 
+                            placeholder="Start typing here to create a task..." required>
                     </div>
+                    <button type="submit" class="btn btn-add-task px-4">Add Task</button>
                 </div>
             </form>
         </div>
-    </div>
-    <div id="task-list" class="list-group shadow-sm"
-        hx-post="{% url 'tasks:task-reorder' %}" 
-        hx-trigger="end" 
-        hx-swap="none"
-        hx-include="#task-list input[name='task']"
-        _="on load js(me) Sortable.create(me, {handle:'.drag-handle', animation:150, onEnd:()=>me.dispatchEvent(new Event('end'))}) end">
 
-        {% for task in tasks %}
-            {% include "tasks/task_element.html" %}
-        {% empty %}
-            <div id="empty-state" class="text-center py-5 bg-white rounded">
-                <p class="text-muted text-center py-4">No tasks yet. Add first task</p>
-            </div>
-        {% endfor %}
+        <div id="task-list" 
+            class="bg-white"
+            hx-post="{% url 'tasks:task-reorder' %}" 
+            hx-trigger="end" 
+            hx-swap="none"
+            hx-include="[name='task']" 
+            _="on load js(me) Sortable.create(me, {
+                    handle: '.drag-handle', 
+                    animation: 150, 
+                    onEnd: () => { me.dispatchEvent(new Event('end')) }
+                }) end">
+            
+            {% for task in tasks %}
+                {% include "tasks/task_element.html" %}
+            {% endfor %}
+        </div>
+        
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'tasks:project-list' %}" class="btn btn-primary px-5 py-2 shadow-sm border-1 border-light">
+             <i class="bi bi-arrow-left me-2"></i> Back to Projects
+        </a>
     </div>
 </div>
+
 {% endblock %}
