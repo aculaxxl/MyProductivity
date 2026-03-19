@@ -39,7 +39,7 @@ Please check the `dev` branch:
 
 1. **Clone the repository**:
    ```bash
-   git clone <https://github.com/aculaxxl/MyProductivity>
+   git clone https://github.com/aculaxxl/MyProductivity
 2. Run with Docker:
     ```bash
     docker compose up --build
